@@ -51,16 +51,37 @@ def get_initial_train_data(x_train, y_train, percent=0.01):
     
     return initial_x_train, initial_y_train
 
-
+from tensorflow.keras.models import Sequential
+from tensorflow.keras.layers import Dense, Dropout, Flatten, Conv2D, MaxPooling2D, BatchNormalization
 # Hàm để xây dựng model Neural Network
 def build_model():
     model = Sequential([
-        Flatten(input_shape=(28, 28)),
+        # Lớp Convolutional đầu tiên
+        Conv2D(32, kernel_size=(3, 3), activation='relu', input_shape=(28, 28, 1)),
+        BatchNormalization(),  # Chuẩn hóa đầu vào
+        MaxPooling2D(pool_size=(2, 2)),  # Giảm kích thước không gian
+        Dropout(0.25),  # Tránh overfitting
+
+        # Lớp Convolutional thứ hai
+        Conv2D(64, kernel_size=(3, 3), activation='relu'),
+        BatchNormalization(),
+        MaxPooling2D(pool_size=(2, 2)),
+        Dropout(0.25),
+
+        # Làm phẳng đầu ra để kết nối với lớp Dense
+        Flatten(),
+
+        # Lớp Dense ẩn
         Dense(128, activation='relu'),
-        Dropout(0.2),
-        Dense(10, activation='softmax')
+        BatchNormalization(),
+        Dropout(0.5),  # Tăng Dropout để tránh overfitting
+
+        # Lớp đầu ra
+        Dense(10, activation='softmax')  # 10 lớp đầu ra cho 10 chữ số (0-9)
     ])
-    model.compile(optimizer=Adam(), loss='categorical_crossentropy', metrics=['accuracy'])
+
+    # Biên dịch mô hình
+    model.compile(optimizer='adam', loss='categorical_crossentropy', metrics=['accuracy'])
     return model
 
 # Hàm chính để thực hiện Pseudo Labelling
