@@ -51,6 +51,7 @@ def get_initial_train_data(x_train, y_train, percent=0.01):
     
     return initial_x_train, initial_y_train
 
+
 # Hàm để xây dựng model Neural Network
 def build_model():
     model = Sequential([
