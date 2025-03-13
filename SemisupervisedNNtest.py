@@ -4,9 +4,6 @@ import os
 
 from sklearn.model_selection import train_test_split
 import tensorflow as tf
-from tensorflow.keras.datasets import mnist
-from tensorflow.keras.models import Sequential
-from tensorflow.keras.layers import Dense, Dropout, Flatten
 from tensorflow.keras.optimizers import Adam
 import streamlit as st
 import matplotlib.pyplot as plt
@@ -91,7 +88,8 @@ def pseudo_labelling(x_train, y_train, x_test, y_test, threshold, max_iter):
     
     # Huấn luyện model ban đầu
     model = build_model()
-    history = model.fit(x_train, y_train, epochs=10, batch_size=32, validation_data=(x_test, y_test), verbose=0)
+    # history = model.fit(x_train, y_train, epochs=10, batch_size=32, validation_data=(x_test, y_test), verbose=0)
+    history = model.fit(x_train, y_train, epochs=15, batch_size=128, validation_split=0.2)
     
     # Hiển thị kết quả ban đầu
     st.write("### Kết quả huấn luyện ban đầu")
