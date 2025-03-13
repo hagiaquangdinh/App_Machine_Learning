@@ -69,7 +69,7 @@ def pseudo_labelling(x_train, y_train, x_test, y_test, threshold, max_iter):
     
     # Huấn luyện model ban đầu
     model = build_model()
-    history = model.fit(initial_x_train, initial_y_train, epochs=10, batch_size=32, validation_split=0.2, verbose=0)
+    history = model.fit(x_train, y_train, epochs=10, batch_size=32, validation_data=(x_test, y_test), verbose=0)
     
     # Hiển thị kết quả ban đầu
     st.write("### Kết quả huấn luyện ban đầu")
