@@ -145,8 +145,8 @@ def run_PseudoLabellingt_app():
     st.title("Pseudo Labelling với Neural Network trên tập dữ liệu MNIST")
     
     # Thiết lập các tham số
-    threshold = st.sidebar.slider("Ngưỡng quyết định", min_value=0.8, max_value=0.99, value=0.95, step=0.01)
-    max_iter = st.sidebar.slider("Số lần lặp", min_value=1, max_value=10, value=5, step=1)
+    threshold = st.slider("Ngưỡng quyết định", min_value=0.8, max_value=0.99, value=0.95, step=0.01)
+    max_iter = st.slider("Số lần lặp", min_value=1, max_value=10, value=5, step=1)
     
     # Bắt đầu quá trình Pseudo Labelling
     if st.button("Bắt đầu"):
