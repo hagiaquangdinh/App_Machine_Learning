@@ -463,7 +463,7 @@ def run_PseudoLabellingt_app():
                     ax2.legend()
 
                     st.pyplot(fig)
-                    return
+
 
     with tab_demo:   
         with st.expander("**Dự đoán kết quả**", expanded=True):
