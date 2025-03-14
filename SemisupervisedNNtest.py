@@ -463,6 +463,7 @@ def run_PseudoLabellingt_app():
                     ax2.legend()
 
                     st.pyplot(fig)
+                    st.stop()
                     
 
     with tab_demo:   
