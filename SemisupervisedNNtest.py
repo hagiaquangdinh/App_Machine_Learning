@@ -307,7 +307,7 @@ def run_PseudoLabellingt_app():
                 y_train = st.session_state["y_train"]
                 y_val = st.session_state["y_val"]
                 y_test = st.session_state["y_test"]
-                
+
                 # Lựa chọn tham số huấn luyện
                 k_folds = st.slider("Số fold cho Cross-Validation:", 3, 10, 5)
                 
@@ -351,6 +351,7 @@ def run_PseudoLabellingt_app():
                                 cnn.compile(optimizer=opt, loss=loss_fn, metrics=["accuracy"])
 
                                 mlflow.log_params({"num_layers": num_layers, "num_neurons": num_neurons, "activation": activation, "optimizer": optimizer, "k_folds": k_folds})
+                                
                                 test_loss, test_accuracy = float("nan"), float("nan")
                                 kf = StratifiedKFold(n_splits=k_folds, shuffle=True, random_state=42)
                                 accuracies, losses = [], []
