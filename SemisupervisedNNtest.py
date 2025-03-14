@@ -229,6 +229,7 @@ def run_PseudoLabellingt_app():
 
             # Đọc dữ liệu
             X, y = load_mnist_data()
+            X = X.reshape(X.shape[0], -1)  # Chuyển ảnh về vector 1D
             # total_samples = X.shape[0] 
 
             # Cho phép người dùng chọn tỷ lệ validation và test
@@ -239,6 +240,7 @@ def run_PseudoLabellingt_app():
             # Tạo nút "Lưu Dữ Liệu"
             if st.button("Xác Nhận & Lưu Dữ Liệu"):
                 with mlflow.start_run():
+                    
                     
                     # Phân chia dữ liệu
                     X_train_data, X_test_data, y_train_data, y_test_data = train_test_split(X, y, test_size=test_size, random_state=42)
@@ -285,12 +287,12 @@ def run_PseudoLabellingt_app():
                     # Hiển thị kết quả
                     st.write(f"📊 **Tỷ lệ phân chia**: Test={test_percent:.0f}%, Train={train_percent:.0f}%, Val={val_percent:.0f}%")
                     st.write("✅ Dữ liệu đã được xử lý và chia tách.")
-                    st.write(f"🔹 Kích thước tập huấn luyện ban đầu: `{X_train_initial.shape}`")
-                    st.write(f"🔹 Kích thước tập kiểm tra: `{X_test_data.shape}`")
-                    st.write(f"🔹 Kích thước tập validation: `{X_val_data.shape}`")
+                    st.write(f"🔹 Kích thước tập huấn luyện ban đầu: `{X_train.shape}`")
+                    st.write(f"🔹 Kích thước tập kiểm tra: `{X_test.shape}`")
+                    st.write(f"🔹 Kích thước tập validation: `{X_val.shape}`")
 
                     # Tạo biểu đồ số lượng dữ liệu của mỗi nhãn trong tập train
-                    unique_labels, counts = np.unique(y_train_initial, return_counts=True)
+                    unique_labels, counts = np.unique(y_train, return_counts=True)
                     fig, ax = plt.subplots()
                     ax.bar(unique_labels, counts)
                     ax.set_xlabel('Nhãn')
@@ -307,9 +309,6 @@ def run_PseudoLabellingt_app():
                 y_train = st.session_state["y_train"]
                 y_val = st.session_state["y_val"]
                 y_test = st.session_state["y_test"]
-
-                print(f"Shape of X_train before fitting: {X_train.shape}")
-
                 # Lựa chọn tham số huấn luyện
                 k_folds = st.slider("Số fold cho Cross-Validation:", 3, 10, 5)
                 
@@ -334,9 +333,16 @@ def run_PseudoLabellingt_app():
                         with st.spinner("🔄 Đang huấn luyện..."):
                             with mlflow.start_run():
                                 
-                                
-                                mlflow.log_params({"num_layers": num_layers, "num_neurons": num_neurons, "activation": activation, "optimizer": optimizer, "k_folds": k_folds})
+                                cnn = keras.Sequential([
+                                    layers.Input(shape=(X_train.shape[1],)),
+                                    # Các lớp ẩn của model
+                                    *[layers.Dense(num_neurons, activation=activation) for _ in range(num_layers)],
+                                    layers.Dense(10, activation="softmax")
+                                ])
+                                cnn.compile(optimizer=optimizer, loss=loss_fn, metrics=["accuracy"])
+                                cnn.optimizer.lr = learning_rate_init
 
+                                mlflow.log_params({"num_layers": num_layers, "num_neurons": num_neurons, "activation": activation, "optimizer": optimizer, "k_folds": k_folds})
                                 test_loss, test_accuracy = float("nan"), float("nan")
                                 kf = StratifiedKFold(n_splits=k_folds, shuffle=True, random_state=42)
                                 accuracies, losses = [], []
@@ -354,25 +360,6 @@ def run_PseudoLabellingt_app():
                                     for i, (train_idx, val_idx) in enumerate(kf.split(X_train, y_train)):
                                         X_k_train, X_k_val = X_train[train_idx], X_train[val_idx]
                                         y_k_train, y_k_val = y_train[train_idx], y_train[val_idx]
-
-                                        cnn = keras.Sequential([
-                                            layers.Input(shape=(X_k_train.shape[1],)),  # Keep layers.Input
-                                            # layers.Reshape((28, 28)),  # Reshape to (28, 28) before Flatten
-                                            layers.Flatten(), 
-                                            *[layers.Dense(num_neurons, activation=activation) for _ in range(num_layers)],
-                                            layers.Dense(10, activation="softmax")
-                                        ])
-
-                                        # Chọn optimizer với learning rate
-                                        if optimizer == "adam":
-                                            opt = keras.optimizers.Adam(learning_rate=learning_rate_init)
-                                        elif optimizer == "sgd":
-                                            opt = keras.optimizers.SGD(learning_rate=learning_rate_init)
-                                        else:
-                                            opt = keras.optimizers.RMSprop(learning_rate=learning_rate_init)
-
-                                        cnn.compile(optimizer=opt, loss=loss_fn, metrics=["accuracy"])
-
                                         
                                         # progress_bar_epoch = st.progress(0)
                                         # class EpochCallback(keras.callbacks.Callback):
