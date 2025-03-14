@@ -351,7 +351,7 @@ def run_PseudoLabellingt_app():
                                 start_time = time.time()
                                 iteration_count = 0
 
-                                while not (len(X_val) > 0 or iteration_count < iteration):
+                                while len(X_val) <= 0 and iteration_count >= iteration:
                                     iteration_count += 1
                                     st.write(f"**Lần lặp thứ {iteration_count}:**")
                                     progress_bar = st.progress(0)# Khởi tạo thanh trạng thái ở 0%
