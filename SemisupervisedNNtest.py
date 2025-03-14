@@ -359,9 +359,9 @@ def run_PseudoLabellingt_app():
                                     
                                     total_folds = k_folds
                                     
-                                    for i, (train_idx, val_idx) in enumerate(kf.split(X_train, y_train)):
-                                        X_k_train, X_k_val = X_train[train_idx], X_train[val_idx]
-                                        y_k_train, y_k_val = y_train[train_idx], y_train[val_idx]
+                                    for i, (train_idx) in enumerate(kf.split(X_train, y_train)):
+                                        X_k_train = X_train[train_idx]
+                                        y_k_train = y_train[train_idx]
                                         
                                         # progress_bar_epoch = st.progress(0)
                                         # class EpochCallback(keras.callbacks.Callback):
@@ -372,7 +372,7 @@ def run_PseudoLabellingt_app():
 
                                         start_time = time.time()
                                         # history = cnn.fit(X_k_train, y_k_train, epochs=epochs, validation_data=(X_k_val, y_k_val), verbose=2, callbacks=[EpochCallback()])
-                                        history = cnn.fit(X_k_train, y_k_train, epochs=epochs, validation_data=(X_k_val, y_k_val), verbose=2)
+                                        history = cnn.fit(X_k_train, y_k_train, epochs=epochs, validation_data=(X_val, y_val), verbose=2)
                                         elapsed_time = time.time() - start_time
                                         
                                         accuracies.append(history.history["val_accuracy"][-1])
