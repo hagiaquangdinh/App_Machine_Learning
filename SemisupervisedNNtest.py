@@ -320,7 +320,7 @@ def run_PseudoLabellingt_app():
 
                 threshold = st.slider("Threshold", min_value=0.0, max_value=1.0, value=0.6, step=0.01)
 
-                iteration = st.slider("Số lần lặp", 1, 10, 5)
+                iteration = st.slider("Số lần lặp tối đa", 2, 10, 5)
 
                 activation = st.selectbox("Hàm kích hoạt:", ["relu", "sigmoid", "tanh"])
 
@@ -351,7 +351,7 @@ def run_PseudoLabellingt_app():
                                 start_time = time.time()
                                 iteration_count = 0
 
-                                while len(X_val) <= 0 and iteration_count >= iteration:
+                                while len(X_val) > 0 | iteration_count < iteration:
                                     iteration_count += 1
                                     st.write(f"**Lần lặp thứ {iteration_count}:**")
                                     progress_bar = st.progress(0)# Khởi tạo thanh trạng thái ở 0%
@@ -359,9 +359,9 @@ def run_PseudoLabellingt_app():
                                     
                                     total_folds = k_folds
                                     
-                                    for i, (train_idx) in enumerate(kf.split(X_train, y_train)):
-                                        X_k_train = X_train[train_idx]
-                                        y_k_train = y_train[train_idx]
+                                    for i, (train_idx, val_idx) in enumerate(kf.split(X_train, y_train)):
+                                        X_k_train, X_k_val = X_train[train_idx], X_train[val_idx]
+                                        y_k_train, y_k_val = y_train[train_idx], y_train[val_idx]
                                         
                                         # progress_bar_epoch = st.progress(0)
                                         # class EpochCallback(keras.callbacks.Callback):
@@ -372,7 +372,7 @@ def run_PseudoLabellingt_app():
 
                                         start_time = time.time()
                                         # history = cnn.fit(X_k_train, y_k_train, epochs=epochs, validation_data=(X_k_val, y_k_val), verbose=2, callbacks=[EpochCallback()])
-                                        history = cnn.fit(X_k_train, y_k_train, epochs=epochs, validation_data=(X_val, y_val), verbose=2)
+                                        history = cnn.fit(X_k_train, y_k_train, epochs=epochs, validation_data=(X_k_val, y_k_val), verbose=2)
                                         elapsed_time = time.time() - start_time
                                         
                                         accuracies.append(history.history["val_accuracy"][-1])
