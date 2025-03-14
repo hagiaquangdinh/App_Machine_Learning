@@ -434,6 +434,8 @@ def run_PseudoLabellingt_app():
                     mlflow.log_metric("test_accuracy", test_accuracy)
                     mlflow.log_metric("test_loss", test_loss)
 
+                    mlflow.end_run()
+
                     # Lưu model đã huấn luyện vào st.session_state
                     st.session_state.selected_model_type = "Neural Network"
                     st.session_state.trained_model = cnn
