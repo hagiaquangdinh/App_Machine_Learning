@@ -45,7 +45,7 @@ def load_mnist_data():
     y = np.load("ytest.npy")
     return X, y
 
-def run_PseudoLabelling_app():
+def run_PseudoLabellingt_app():
     
 
     @st.cache_data  # Lưu cache để tránh load lại dữ liệu mỗi lần chạy lại Streamlit
@@ -646,7 +646,7 @@ def run_PseudoLabelling_app():
     
 
 if __name__ == "__main__":
-    run_PseudoLabelling_app()
+    run_PseudoLabellingt_app()
     # st.write(f"MLflow Tracking URI: {mlflow.get_tracking_uri()}")
     # print("🎯 Kiểm tra trên DagsHub: https://dagshub.com/quangdinh/HMVPYTHON.mlflow/")
     # # # cd "C:\Users\Dell\OneDrive\Pictures\Documents\Code\python\OpenCV\HMVPYTHON\App"
