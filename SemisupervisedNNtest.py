@@ -464,7 +464,6 @@ def run_PseudoLabellingt_app():
 
                     st.pyplot(fig)
                     return
-                    
 
     with tab_demo:   
         with st.expander("**Dự đoán kết quả**", expanded=True):
