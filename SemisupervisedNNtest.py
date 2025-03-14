@@ -41,8 +41,8 @@ def preprocess_canvas_image(canvas_result):
     return None
 
 def load_mnist_data():
-    X = np.load("Xtest.npy")
-    y = np.load("ytest.npy")
+    X = np.load("data/X_test.npy")
+    y = np.load("data/y_test.npy")
     return X, y
 
 def run_PseudoLabellingt_app():
