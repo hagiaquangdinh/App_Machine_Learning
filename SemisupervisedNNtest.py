@@ -45,6 +45,11 @@ def load_mnist_data():
     y = np.load("data/y_test.npy")
     return X, y
 
+
+
+
+
+
 def data_preparation():
     # Đọc dữ liệu
     X, y = load_mnist_data()
@@ -115,6 +120,10 @@ def data_preparation():
         ax.set_title('Phân phối số lượng dữ liệu trong tập train')
         ax.set_xticks(unique_labels)
         st.pyplot(fig)
+
+
+
+
 
 def learning_model():
     X_train = st.session_state["X_train"]
@@ -298,6 +307,13 @@ def learning_model():
 
         st.pyplot(fig)
 
+
+
+
+
+
+
+
 def run_PseudoLabellingt_app():
     
 
@@ -366,6 +382,11 @@ def run_PseudoLabellingt_app():
     ])
     # tab_info, tab_load, tab_preprocess, tab_split,  tab_demo, tab_log_info = tabs
     tab_info,tab_note, tab_preprocess,  tab_demo, tab_demo_2 ,tab_mlflow= tabs
+
+
+
+
+
 
     # with st.expander("🖼️ Dữ liệu ban đầu", expanded=True):
     with tab_info:
@@ -474,6 +495,11 @@ def run_PseudoLabellingt_app():
     if "show_training_options" not in st.session_state:
         st.session_state.show_training_options = False
 
+
+
+
+
+
     # 3️⃣ HUẤN LUYỆN MÔ HÌNH
     with tab_preprocess:
         with st.expander("**Huấn luyện Neural Network**", expanded=True):
@@ -481,10 +507,14 @@ def run_PseudoLabellingt_app():
             st.write("🔍 **Chuẩn bị dữ liệu cho mô hình**")
             data_preparation()  
             st.session_state.show_training_options = True
-            
+
             if st.session_state.show_training_options:
                 # Cập nhật dữ liệu
                 learning_model()
+
+
+
+
 
 
     with tab_demo:   
@@ -529,6 +559,13 @@ def run_PseudoLabellingt_app():
                             st.error(f"Ảnh không có số đặc trưng đúng ({image.shape[1]} thay vì {X_train_shape}). Hãy kiểm tra lại dữ liệu đầu vào!")
                     else:
                         st.error("Dữ liệu huấn luyện không tìm thấy. Hãy huấn luyện mô hình trước khi dự đoán.")
+
+
+
+
+
+
+
 
     with tab_demo_2:   
         with st.expander("**Dự đoán kết quả**", expanded=True):
@@ -583,6 +620,12 @@ def run_PseudoLabellingt_app():
                         st.success(f"Dự đoán: {np.argmax(prediction)} với xác suất {np.max(prediction)*100:.2f}%")
                     else:
                         st.error("⚠️ Hãy vẽ một số trước khi bấm Dự đoán!")
+
+
+
+
+
+
 
     with tab_mlflow:
         st.header("Thông tin Huấn luyện & MLflow UI")
@@ -675,6 +718,9 @@ def run_PseudoLabellingt_app():
             st.error(f"Không thể kết nối với MLflow: {e}")
 
     
+
+
+
 
 if __name__ == "__main__":
     run_PseudoLabellingt_app()
