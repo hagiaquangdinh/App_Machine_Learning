@@ -333,10 +333,9 @@ def run_PseudoLabellingt_app():
                             with mlflow.start_run():
                                 
                                 cnn = keras.Sequential([
-                                    layers.Input(shape=(X_train.shape[1],))
-                                ] + [
-                                    layers.Dense(num_neurons, activation=activation) for _ in range(num_layers)
-                                ] + [
+                                    layers.Input(shape=(X_train.shape[1],)), # Add Flatten layer here
+                                    layers.Flatten(), 
+                                    *[layers.Dense(num_neurons, activation=activation) for _ in range(num_layers)],
                                     layers.Dense(10, activation="softmax")
                                 ])
 
@@ -351,7 +350,7 @@ def run_PseudoLabellingt_app():
                                 cnn.compile(optimizer=opt, loss=loss_fn, metrics=["accuracy"])
 
                                 mlflow.log_params({"num_layers": num_layers, "num_neurons": num_neurons, "activation": activation, "optimizer": optimizer, "k_folds": k_folds})
-                                
+
                                 test_loss, test_accuracy = float("nan"), float("nan")
                                 kf = StratifiedKFold(n_splits=k_folds, shuffle=True, random_state=42)
                                 accuracies, losses = [], []
