@@ -336,7 +336,7 @@ def run_PseudoLabellingt_app():
                                 
                                 cnn = keras.Sequential([
                                     layers.Input(shape=(X_train.shape[1],)),  # Keep layers.Input
-                                    layers.Reshape((28, 28)),  # Reshape to (28, 28) before Flatten
+                                    # layers.Reshape((28, 28)),  # Reshape to (28, 28) before Flatten
                                     layers.Flatten(), 
                                     *[layers.Dense(num_neurons, activation=activation) for _ in range(num_layers)],
                                     layers.Dense(10, activation="softmax")
