@@ -307,6 +307,7 @@ def run_PseudoLabellingt_app():
                 y_train = st.session_state["y_train"]
                 y_val = st.session_state["y_val"]
                 y_test = st.session_state["y_test"]
+                
                 # Lựa chọn tham số huấn luyện
                 k_folds = st.slider("Số fold cho Cross-Validation:", 3, 10, 5)
                 
