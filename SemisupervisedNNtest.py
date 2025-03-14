@@ -334,24 +334,7 @@ def run_PseudoLabellingt_app():
                         with st.spinner("🔄 Đang huấn luyện..."):
                             with mlflow.start_run():
                                 
-                                cnn = keras.Sequential([
-                                    layers.Input(shape=(X_train.shape[1],)),  # Keep layers.Input
-                                    # layers.Reshape((28, 28)),  # Reshape to (28, 28) before Flatten
-                                    layers.Flatten(), 
-                                    *[layers.Dense(num_neurons, activation=activation) for _ in range(num_layers)],
-                                    layers.Dense(10, activation="softmax")
-                                ])
-
-                                # Chọn optimizer với learning rate
-                                if optimizer == "adam":
-                                    opt = keras.optimizers.Adam(learning_rate=learning_rate_init)
-                                elif optimizer == "sgd":
-                                    opt = keras.optimizers.SGD(learning_rate=learning_rate_init)
-                                else:
-                                    opt = keras.optimizers.RMSprop(learning_rate=learning_rate_init)
-
-                                cnn.compile(optimizer=opt, loss=loss_fn, metrics=["accuracy"])
-
+                                
                                 mlflow.log_params({"num_layers": num_layers, "num_neurons": num_neurons, "activation": activation, "optimizer": optimizer, "k_folds": k_folds})
 
                                 test_loss, test_accuracy = float("nan"), float("nan")
@@ -371,6 +354,25 @@ def run_PseudoLabellingt_app():
                                     for i, (train_idx, val_idx) in enumerate(kf.split(X_train, y_train)):
                                         X_k_train, X_k_val = X_train[train_idx], X_train[val_idx]
                                         y_k_train, y_k_val = y_train[train_idx], y_train[val_idx]
+
+                                        cnn = keras.Sequential([
+                                            layers.Input(shape=(X_k_train.shape[1],)),  # Keep layers.Input
+                                            # layers.Reshape((28, 28)),  # Reshape to (28, 28) before Flatten
+                                            layers.Flatten(), 
+                                            *[layers.Dense(num_neurons, activation=activation) for _ in range(num_layers)],
+                                            layers.Dense(10, activation="softmax")
+                                        ])
+
+                                        # Chọn optimizer với learning rate
+                                        if optimizer == "adam":
+                                            opt = keras.optimizers.Adam(learning_rate=learning_rate_init)
+                                        elif optimizer == "sgd":
+                                            opt = keras.optimizers.SGD(learning_rate=learning_rate_init)
+                                        else:
+                                            opt = keras.optimizers.RMSprop(learning_rate=learning_rate_init)
+
+                                        cnn.compile(optimizer=opt, loss=loss_fn, metrics=["accuracy"])
+
                                         
                                         # progress_bar_epoch = st.progress(0)
                                         # class EpochCallback(keras.callbacks.Callback):
