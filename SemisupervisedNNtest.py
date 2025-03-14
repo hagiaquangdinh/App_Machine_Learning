@@ -85,7 +85,7 @@ def run_PseudoLabellingt_app():
 
     # Đọc dữ liệu
     X_data, y_data = load_mnist_data()
-    total_samples = X.shape[0] # Tổng số mẫu
+    # total_samples = X.shape[0] # Tổng số mẫu
 
     # # Định nghĩa đường dẫn đến các file MNIST
     # dataset_path = os.path.dirname(os.path.abspath(__file__)) 
@@ -260,7 +260,7 @@ def run_PseudoLabellingt_app():
 
 
                     # Tính tỷ lệ thực tế của từng tập
-                    total_samples = X.shape[0]
+                    # total_samples = X.shape[0]
                     test_percent = (X_test_data.shape[0] / total_samples) * 100
                     train_percent = (X_train_initial.shape[0] / total_samples) * 100
                     val_percent = (X_val_data.shape[0] / total_samples) * 100
