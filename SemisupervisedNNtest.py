@@ -351,54 +351,57 @@ def run_PseudoLabellingt_app():
                             start_time = time.time()
                             iteration_count = 0
 
-                            while len(X_val) > 0 | iteration_count < iteration:
-                                iteration_count += 1
-                                st.write(f"**Lần lặp thứ {iteration_count}:**")
-                                progress_bar = st.progress(0)# Khởi tạo thanh trạng thái ở 0%
-                                progress_text = st.empty()# Tạo một vùng trống để hiển thị % tiến trình
-                                
-                                total_folds = k_folds
-                                
-                                for i, (train_idx, val_idx) in enumerate(kf.split(X_train, y_train)):
-                                    X_k_train, X_k_val = X_train[train_idx], X_train[val_idx]
-                                    y_k_train, y_k_val = y_train[train_idx], y_train[val_idx]
+                            for iteration in range(iteration):
+                                if len(X_val) > 0:
+                                    iteration_count += 1
+                                    st.write(f"**Lần lặp thứ {iteration_count}:**")
+                                    progress_bar = st.progress(0)# Khởi tạo thanh trạng thái ở 0%
+                                    progress_text = st.empty()# Tạo một vùng trống để hiển thị % tiến trình
                                     
-                                    # progress_bar_epoch = st.progress(0)
-                                    # class EpochCallback(keras.callbacks.Callback):
-                                    #     def on_epoch_end(self, epoch, logs=None):
-                                    #         progress_epoch = (epoch + 1) / epochs * 100
-                                    #         progress_bar_epoch.progress(int(progress_epoch))
-                                    #         st.write(f"Folds {i+1}/{k_folds}: Epoch {epoch+1}/{epochs}: hoàn thành :               Loss: {logs['loss']:.4f} , Accuracy: {logs['accuracy']:.4f}")
-
-                                    start_time = time.time()
-                                    # history = cnn.fit(X_k_train, y_k_train, epochs=epochs, validation_data=(X_k_val, y_k_val), verbose=2, callbacks=[EpochCallback()])
-                                    history = cnn.fit(X_k_train, y_k_train, epochs=epochs, validation_data=(X_k_val, y_k_val), verbose=2)
-                                    elapsed_time = time.time() - start_time
+                                    total_folds = k_folds
                                     
-                                    accuracies.append(history.history["val_accuracy"][-1])
-                                    losses.append(history.history["val_loss"][-1])
+                                    for i, (train_idx, val_idx) in enumerate(kf.split(X_train, y_train)):
+                                        X_k_train, X_k_val = X_train[train_idx], X_train[val_idx]
+                                        y_k_train, y_k_val = y_train[train_idx], y_train[val_idx]
+                                        
+                                        # progress_bar_epoch = st.progress(0)
+                                        # class EpochCallback(keras.callbacks.Callback):
+                                        #     def on_epoch_end(self, epoch, logs=None):
+                                        #         progress_epoch = (epoch + 1) / epochs * 100
+                                        #         progress_bar_epoch.progress(int(progress_epoch))
+                                        #         st.write(f"Folds {i+1}/{k_folds}: Epoch {epoch+1}/{epochs}: hoàn thành :               Loss: {logs['loss']:.4f} , Accuracy: {logs['accuracy']:.4f}")
 
-                                    # Cập nhật thanh trạng thái và hiển thị phần trăm
-                                    progress = (i + 1) / total_folds  # Tính phần trăm hoàn thành
-                                    progress_bar.progress(progress)  # Cập nhật thanh trạng thái
-                                    progress_text.text(f"️🎯Tiến trình huấn luyện: {int(progress * 100)}%")   
+                                        start_time = time.time()
+                                        # history = cnn.fit(X_k_train, y_k_train, epochs=epochs, validation_data=(X_k_val, y_k_val), verbose=2, callbacks=[EpochCallback()])
+                                        history = cnn.fit(X_k_train, y_k_train, epochs=epochs, validation_data=(X_k_val, y_k_val), verbose=2)
+                                        elapsed_time = time.time() - start_time
+                                        
+                                        accuracies.append(history.history["val_accuracy"][-1])
+                                        losses.append(history.history["val_loss"][-1])
 
-                                # Dự đoán nhãn cho phần dữ liệu còn lại (99% của tập train ban đầu)
-                                y_pred = cnn.predict(X_val)
-                                y_pred_class = np.argmax(y_pred, axis=1)
-                                
-                                # Lấy ngưỡng quyết định gán Pseudo Label cho mẫu
-                                pseudo_labels = np.where(y_pred.max(axis=1) >= threshold, y_pred_class, -1)
-                                
-                                # Tạo tập dữ liệu mới
-                                X_new = np.concatenate((X_train, X_val[pseudo_labels != -1]), axis=0)
-                                y_new = np.concatenate((y_train, pseudo_labels[pseudo_labels != -1]), axis=0)
-                                
-                                # Cập nhật tập dữ liệu
-                                X_train = X_new
-                                y_train = y_new
-                                X_val = X_val[pseudo_labels == -1]
-                                y_val = y_val[pseudo_labels == -1]
+                                        # Cập nhật thanh trạng thái và hiển thị phần trăm
+                                        progress = (i + 1) / total_folds  # Tính phần trăm hoàn thành
+                                        progress_bar.progress(progress)  # Cập nhật thanh trạng thái
+                                        progress_text.text(f"️🎯Tiến trình huấn luyện: {int(progress * 100)}%")   
+
+                                    # Dự đoán nhãn cho phần dữ liệu còn lại (99% của tập train ban đầu)
+                                    y_pred = cnn.predict(X_val)
+                                    y_pred_class = np.argmax(y_pred, axis=1)
+                                    
+                                    # Lấy ngưỡng quyết định gán Pseudo Label cho mẫu
+                                    pseudo_labels = np.where(y_pred.max(axis=1) >= threshold, y_pred_class, -1)
+                                    
+                                    # Tạo tập dữ liệu mới
+                                    X_new = np.concatenate((X_train, X_val[pseudo_labels != -1]), axis=0)
+                                    y_new = np.concatenate((y_train, pseudo_labels[pseudo_labels != -1]), axis=0)
+                                    
+                                    # Cập nhật tập dữ liệu
+                                    X_train = X_new
+                                    y_train = y_new
+                                    X_val = X_val[pseudo_labels == -1]
+                                    y_val = y_val[pseudo_labels == -1]
+                                else:
+                                    break
                                 
                             elapsed_time = time.time() - start_time
 
