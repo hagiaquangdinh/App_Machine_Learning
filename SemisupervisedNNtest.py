@@ -237,13 +237,28 @@ def learning_model():
                     # Tạo tập dữ liệu mới
                     X_new = np.concatenate((X_train, X_val[pseudo_labels != -1]), axis=0)
                     y_new = np.concatenate((y_train, pseudo_labels[pseudo_labels != -1]), axis=0)
+                    max_probs = np.max(y_pred, axis=1)
+
+                    # (4) Lọc các mẫu vượt ngưỡng
+                    confident_mask = max_probs >= threshold
+                    X_confident = X_val[confident_mask]
+                    y_confident = pseudo_labels[confident_mask]
                     
                     # Cập nhật tập dữ liệu
                     X_train = X_new
                     y_train = y_new
                     X_val = X_val[pseudo_labels == -1]
                     y_val = y_val[pseudo_labels == -1]
-                else:
+                    
+                # Điều kiện dừng
+                elif len(X_confident) == 0:
+                    st.write(f"🔹 Vòng {iteration + 1}: Không có mẫu nào vượt ngưỡng {threshold}. Dừng lại.")
+                    break
+                elif len(X_confident) < 10:
+                    st.write(f"🔹 Vòng {iteration + 1}: Số mẫu gán nhãn quá ít ({len(X_confident)}). Dừng lại.")
+                    break
+                elif len(X_val) == 0:
+                    st.write("✅ Đã gán nhãn hết tập unlabeled!")
                     break
                 
             elapsed_time = time.time() - start_time
