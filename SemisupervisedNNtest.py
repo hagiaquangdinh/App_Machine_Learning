@@ -126,7 +126,7 @@ def learning_model():
     epochs = st.slider("Số lần lặp tối đa", 2, 50, 5)
     learning_rate_init = st.slider("Tốc độ học", 0.001, 0.1, 0.01, step=0.001, format="%.3f")
     threshold = st.slider("Threshold", min_value=0.0, max_value=1.0, value=0.6, step=0.01)
-    iteration = st.slider("Số lần lặp tối đa", 2, 10, 5)
+    iteration = st.slider("Số lần lặp tối đa", 1, 10, 5)
     activation = st.selectbox("Hàm kích hoạt:", ["relu", "sigmoid", "tanh"])
     num_neurons = st.selectbox("Số neuron mỗi lớp:", [32, 64, 128, 256], index=0)
     optimizer = st.selectbox("Chọn hàm tối ưu", ["adam", "sgd", "lbfgs"])
