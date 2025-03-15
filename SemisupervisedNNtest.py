@@ -126,7 +126,7 @@ def learning_model():
     epochs = st.slider("Số lần lặp tối đa", 2, 50, 5)
     learning_rate_init = st.slider("Tốc độ học", 0.001, 0.1, 0.01, step=0.001, format="%.3f")
     threshold = st.slider("Threshold", min_value=0.0, max_value=1.0, value=0.6, step=0.01)
-    iteration = st.slider("Số lần lặp tối đa", 2, 10, 5)
+    iteration = st.slider("Số lần lặp tối đa", 1, 10, 5)
     activation = st.selectbox("Hàm kích hoạt:", ["relu", "sigmoid", "tanh"])
     num_neurons = st.selectbox("Số neuron mỗi lớp:", [32, 64, 128, 256], index=0)
     optimizer = st.selectbox("Chọn hàm tối ưu", ["adam", "sgd", "lbfgs"])
@@ -183,7 +183,9 @@ def learning_model():
 
                 # Cross-validation với StratifiedKFold
                 kf = StratifiedKFold(n_splits=k_folds, shuffle=True, random_state=42)
+                fold_count = 0
                 for i, (train_idx, val_idx) in enumerate(kf.split(X_train, y_train)):
+                    fold_count += 1
                     X_k_train, X_k_val = X_train[train_idx], X_train[val_idx]
                     y_k_train, y_k_val = y_train[train_idx], y_train[val_idx]
 
@@ -193,14 +195,14 @@ def learning_model():
                         epochs=epochs,
                         validation_data=(X_k_val, y_k_val),
                         verbose=0,  # Tắt log chi tiết để tránh làm chậm Streamlit
-                        batch_size= num_neurons  # Thêm batch_size để tối ưu hóa hiệu suất
+                        batch_size=num_neurons  # Thêm batch_size để tối ưu hóa hiệu suất
                     )
 
                     accuracies.append(history.history["val_accuracy"][-1])
                     losses.append(history.history["val_loss"][-1])
 
                     # Cập nhật tiến trình
-                    progress = (i + 1) / k_folds
+                    progress = (fold_count) / k_folds
                     progress_bar.progress(progress)
                     progress_text.text(f"️🎯 Tiến trình huấn luyện: {int(progress * 100)}%")
 
@@ -261,21 +263,20 @@ def learning_model():
             st.session_state["selected_model_type"] = "Neural Network"
             st.session_state["trained_model"] = cnn
             st.success(f"✅ Huấn luyện hoàn tất trong {elapsed_time:.2f} giây!")
-            st.write(f"📊 **Độ chính xác trung bình trên tập validation:** {avg_val_accuracy:.4f}")
             st.write(f"📊 **Độ chính xác trên tập test:** {test_accuracy:.4f}")
 
             # Vẽ biểu đồ Loss và Accuracy
             st.markdown("#### 📈 Biểu đồ Accuracy và Loss")
             fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(12, 4))
             ax1.plot(history.history['loss'], label='Train Loss', color='blue')
-            ax1.plot(history.history['val_loss'], label='Val Loss', color='orange')
+            ax1.plot(history.history['val_loss'], label='Test Loss', color='orange')
             ax1.set_title('Loss')
             ax1.set_xlabel('Epoch')
             ax1.set_ylabel('Loss')
             ax1.legend()
 
             ax2.plot(history.history['accuracy'], label='Train Accuracy', color='blue')
-            ax2.plot(history.history['val_accuracy'], label='Val Accuracy', color='orange')
+            ax2.plot(history.history['val_accuracy'], label='Test Accuracy', color='orange')
             ax2.set_title('Accuracy')
             ax2.set_xlabel('Epoch')
             ax2.set_ylabel('Accuracy')
