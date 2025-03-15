@@ -47,11 +47,11 @@ def data_preparation():
 
     test_percent = 0
     train_percent = 0
-    val_percent = 0
+    indices_percent = 0
 
     X_train_initial = np.array([]).reshape(0,0)
     X_test_data = np.array([]).reshape(0,0)
-    X_val_data = np.array([]).reshape(0,0)
+    X_indices_data = np.array([]).reshape(0,0)
     y_train_initial = np.array([])
 
     # Cho phép người dùng chọn tỷ lệ validation và test
@@ -66,33 +66,33 @@ def data_preparation():
         X_train_data, X_test_data, y_train_data, y_test_data = train_test_split(X, y, test_size=test_size, random_state=42)
         
         # Lấy 1% số lượng ảnh cho mỗi class (0-9) để làm tập dữ liệu train ban đầu
-        train_indices = []
+        indices = []
         for i in range(10):
             class_indices = np.where(y_train_data == i)[0]
             num_samples = int(0.01 * len(class_indices))
             indices = np.random.choice(class_indices, num_samples, replace=False)
-            train_indices.extend(indices)
+            indices.extend(indices)
 
-        X_train_initial = X_train_data[train_indices]
-        y_train_initial = y_train_data[train_indices]
+        X_train_initial = X_train_data[indices]
+        y_train_initial = y_train_data[indices]
 
         # Chuyển 99% còn lại sang tập val
-        val_indices = np.setdiff1d(np.arange(len(X_train_data)), train_indices)
-        X_val_data = X_train_data[val_indices]
-        y_val_data = y_train_data[val_indices]
+        data_indices = np.setdiff1d(np.arange(len(X_train_data)), indices)
+        X_indices_data = X_train_data[data_indices]
+        y_indices_data = y_train_data[data_indices]
 
 
         # Tính tỷ lệ thực tế của từng tập
         total_samples = X.shape[0]
         test_percent = (X_test_data.shape[0] / total_samples) * 100
         train_percent = (X_train_initial.shape[0] / total_samples) * 100
-        val_percent = (X_val_data.shape[0] / total_samples) * 100
+        indices_percent = (X_indices_data.shape[0] / total_samples) * 100
 
         # Lưu dữ liệu vào session_state
         st.session_state["X_train"] = X_train_initial
         st.session_state["y_train"] = y_train_initial
-        st.session_state["X_val"] = X_val_data
-        st.session_state["y_val"] = y_val_data
+        st.session_state["X_val"] = X_indices_data
+        st.session_state["y_val"] = y_indices_data
         st.session_state["X_test"] = X_test_data
         st.session_state["y_test"] = y_test_data
         
@@ -103,11 +103,11 @@ def data_preparation():
         # mlflow.log_metric("val_percent", val_percent)
         # with result_placeholder:
         # Hiển thị kết quả
-    st.write(f"📊 **Tỷ lệ phân chia**: Test={test_percent:.0f}%, Train={train_percent:.0f}%, Val={val_percent:.0f}%")
+    st.write(f"📊 **Tỷ lệ phân chia**: Test={test_percent:.0f}%, Train={train_percent:.0f}%, Val={indices_percent:.0f}%")
     st.write("✅ Dữ liệu đã được xử lý và chia tách.")
     st.write(f"🔹 Kích thước tập huấn luyện ban đầu: `{X_train_initial.shape}`")
     st.write(f"🔹 Kích thước tập kiểm tra: `{X_test_data.shape}`")
-    st.write(f"🔹 Kích thước tập validation: `{X_val_data.shape}`")
+    st.write(f"🔹 Kích thước tập validation: `{X_indices_data.shape}`")
 
     # Tạo biểu đồ số lượng dữ liệu của mỗi nhãn trong tập train
     unique_labels, counts = np.unique(y_train_initial, return_counts=True)
@@ -138,7 +138,7 @@ def learning_model():
     epochs = st.slider("Số lần lặp tối đa", 2, 50, 5)
     learning_rate_init = st.slider("Tốc độ học", 0.001, 0.1, 0.01, step=0.001, format="%.3f")
     threshold = st.slider("Threshold", min_value=0.0, max_value=1.0, value=0.6, step=0.01)
-    iteration = st.slider("Số lần lặp tối đa", 1, 10, 5)
+    iteration = st.slider("Số lần lặp tối đa khi gán nhãn giả", 1, 10, 5)
     activation = st.selectbox("Hàm kích hoạt:", ["relu", "sigmoid", "tanh"])
     num_neurons = st.selectbox("Số neuron mỗi lớp:", [32, 64, 128, 256], index=0)
     optimizer = st.selectbox("Chọn hàm tối ưu", ["adam", "sgd", "lbfgs"])
