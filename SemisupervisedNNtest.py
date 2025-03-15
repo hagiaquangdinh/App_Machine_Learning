@@ -1,16 +1,12 @@
 import time
-from sklearn.neural_network import MLPClassifier
 import streamlit as st
 import os
-import cv2
 import numpy as np
 import pandas as pd
-import seaborn as sns
 import random
 from sklearn.datasets import fetch_openml, load_iris
 import mlflow
 import matplotlib.pyplot as plt
-from streamlit_drawable_canvas import st_canvas
 from sklearn.model_selection import train_test_split
 from PIL import Image
 from mlflow.tracking import MlflowClient
@@ -200,7 +196,8 @@ def learning_model():
                         X_k_train, y_k_train,
                         epochs=epochs,
                         validation_data=(X_k_val, y_k_val),
-                        verbose=0  # Tắt log chi tiết để tránh làm chậm Streamlit
+                        verbose=0,  # Tắt log chi tiết để tránh làm chậm Streamlit
+                        batch_size= num_neurons  # Thêm batch_size để tối ưu hóa hiệu suất
                     )
 
                     accuracies.append(history.history["val_accuracy"][-1])
