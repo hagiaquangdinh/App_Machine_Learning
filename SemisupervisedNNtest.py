@@ -4,18 +4,14 @@ import os
 import numpy as np
 import pandas as pd
 import random
-from sklearn.datasets import fetch_openml, load_iris
 import mlflow
 import matplotlib.pyplot as plt
 from sklearn.model_selection import train_test_split
 from PIL import Image
 from mlflow.tracking import MlflowClient
 from streamlit_drawable_canvas import st_canvas
-from tensorflow.keras import layers, models, callbacks, optimizers
-from tensorflow.keras.callbacks import EarlyStopping, ModelCheckpoint
-from tensorflow.keras.models import load_model
+from tensorflow.keras import layers, optimizers
 from sklearn.model_selection import train_test_split, StratifiedKFold
-from mlflow.models.signature import infer_signature
 from tensorflow.keras.models import Sequential
 from tensorflow import keras
 
