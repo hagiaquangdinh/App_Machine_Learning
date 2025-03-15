@@ -70,8 +70,8 @@ def data_preparation():
         for i in range(10):
             class_indices = np.where(y_train_data == i)[0]
             num_samples = int(0.01 * len(class_indices))
-            indices = np.random.choice(class_indices, num_samples, replace=False)
-            indices.extend(indices)
+            data_indices_random = np.random.choice(class_indices, num_samples, replace=False)
+            indices.extend(data_indices_random)
 
         X_train_initial = X_train_data[indices]
         y_train_initial = y_train_data[indices]
@@ -103,7 +103,7 @@ def data_preparation():
         # mlflow.log_metric("val_percent", val_percent)
         # with result_placeholder:
         # Hiển thị kết quả
-    st.write(f"📊 **Tỷ lệ phân chia**: Test={test_percent:.0f}%, Train={train_percent:.0f}%, Val={indices_percent:.0f}%")
+    st.write(f"📊 **Tỷ lệ phân chia**: Test={test_percent:.0f}%, Train={train_percent:.0f}%, Val={_percent:.0f}%")
     st.write("✅ Dữ liệu đã được xử lý và chia tách.")
     st.write(f"🔹 Kích thước tập huấn luyện ban đầu: `{X_train_initial.shape}`")
     st.write(f"🔹 Kích thước tập kiểm tra: `{X_test_data.shape}`")
@@ -138,7 +138,7 @@ def learning_model():
     epochs = st.slider("Số lần lặp tối đa", 2, 50, 5)
     learning_rate_init = st.slider("Tốc độ học", 0.001, 0.1, 0.01, step=0.001, format="%.3f")
     threshold = st.slider("Threshold", min_value=0.0, max_value=1.0, value=0.6, step=0.01)
-    iteration = st.slider("Số lần lặp tối đa khi gán nhãn giả", 1, 10, 5)
+    iteration = st.slider("Số lần lặp tối đa khi gán nhãn giả ", 1, 10, 5)
     activation = st.selectbox("Hàm kích hoạt:", ["relu", "sigmoid", "tanh"])
     num_neurons = st.selectbox("Số neuron mỗi lớp:", [32, 64, 128, 256], index=0)
     optimizer = st.selectbox("Chọn hàm tối ưu", ["adam", "sgd", "lbfgs"])
