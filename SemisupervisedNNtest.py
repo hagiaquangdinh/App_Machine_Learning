@@ -258,6 +258,7 @@ def learning_model():
             mlflow.end_run()
 
             # Lưu mô hình và hiển thị kết quả
+            st.session_state["selected_model_type"] = "Neural Network"
             st.session_state["trained_model"] = cnn
             st.success(f"✅ Huấn luyện hoàn tất trong {elapsed_time:.2f} giây!")
             st.write(f"📊 **Độ chính xác trung bình trên tập validation:** {avg_val_accuracy:.4f}")
@@ -350,13 +351,14 @@ def run_PseudoLabellingt_app():
     tabs = st.tabs([
         "Thông tin dữ liệu",
         "Thông tin",
+        "Chuẩn bị dữ liệu",
         "Huấn luyện mô hình",
         "Demo dự đoán file ảnh",
         "Demo dự đoán Viết Tay",
         "Thông tin & Mlflow",
     ])
     # tab_info, tab_load, tab_preprocess, tab_split,  tab_demo, tab_log_info = tabs
-    tab_info,tab_note, tab_preprocess,  tab_demo, tab_demo_2 ,tab_mlflow= tabs
+    tab_info,tab_note, tab_data ,tab_preprocess,  tab_demo, tab_demo_2 ,tab_mlflow= tabs
 
 
 
@@ -466,10 +468,15 @@ def run_PseudoLabellingt_app():
                 - **Recurrent Neural Network (RNN)**: Một mô hình mạng nơ-ron sâu được thiết kế cho dữ liệu chuỗi.
             """)
 
-    # Tạo biến session_state để kiểm soát hiển thị
-    if "show_training_options" not in st.session_state:
-        st.session_state.show_training_options = False
+    
 
+
+    # Chuẩn bị dữ liệu
+    with tab_data:
+        with st.expander("**Chuẩn bị dữ liệu**", expanded=True):
+            st.write("🔍 **Chuẩn bị dữ liệu cho mô hình**")
+            data_preparation()  
+        
 
 
 
@@ -478,15 +485,9 @@ def run_PseudoLabellingt_app():
     # 3️⃣ HUẤN LUYỆN MÔ HÌNH
     with tab_preprocess:
         with st.expander("**Huấn luyện Neural Network**", expanded=True):
-
-            st.write("🔍 **Chuẩn bị dữ liệu cho mô hình**")
-            data_preparation()  
-            st.session_state.show_training_options = True
-
-            if st.session_state.show_training_options:
-                
-                # Cập nhật dữ liệu
-                learning_model()
+        
+            # Cập nhật dữ liệu
+            learning_model()
                 
                     
 
