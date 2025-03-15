@@ -42,6 +42,18 @@ def data_preparation():
     X = X.reshape(X.shape[0], -1)  # Chuyển ảnh về vector 1D
     # total_samples = X.shape[0] 
 
+
+    # Tạo các biến để lưu dữ liệu
+
+    test_percent = 0
+    train_percent = 0
+    val_percent = 0
+
+    X_train_initial = np.array([]).reshape(0,0)
+    X_test_data = np.array([]).reshape(0,0)
+    X_val_data = np.array([]).reshape(0,0)
+    y_train_initial = np.array([])
+
     # Cho phép người dùng chọn tỷ lệ validation và test
     test_size = st.slider("🔹 Chọn % tỷ lệ tập test", min_value=10, max_value=50, value=20, step=1) / 100
 
@@ -91,21 +103,21 @@ def data_preparation():
         # mlflow.log_metric("val_percent", val_percent)
         # with result_placeholder:
         # Hiển thị kết quả
-        st.write(f"📊 **Tỷ lệ phân chia**: Test={test_percent:.0f}%, Train={train_percent:.0f}%, Val={val_percent:.0f}%")
-        st.write("✅ Dữ liệu đã được xử lý và chia tách.")
-        st.write(f"🔹 Kích thước tập huấn luyện ban đầu: `{X_train_initial.shape}`")
-        st.write(f"🔹 Kích thước tập kiểm tra: `{X_test_data.shape}`")
-        st.write(f"🔹 Kích thước tập validation: `{X_val_data.shape}`")
+    st.write(f"📊 **Tỷ lệ phân chia**: Test={test_percent:.0f}%, Train={train_percent:.0f}%, Val={val_percent:.0f}%")
+    st.write("✅ Dữ liệu đã được xử lý và chia tách.")
+    st.write(f"🔹 Kích thước tập huấn luyện ban đầu: `{X_train_initial.shape}`")
+    st.write(f"🔹 Kích thước tập kiểm tra: `{X_test_data.shape}`")
+    st.write(f"🔹 Kích thước tập validation: `{X_val_data.shape}`")
 
-        # Tạo biểu đồ số lượng dữ liệu của mỗi nhãn trong tập train
-        unique_labels, counts = np.unique(y_train_initial, return_counts=True)
-        fig, ax = plt.subplots()
-        ax.bar(unique_labels, counts)
-        ax.set_xlabel('Nhãn')
-        ax.set_ylabel('Số lượng')
-        ax.set_title('Phân phối số lượng dữ liệu trong tập train')
-        ax.set_xticks(unique_labels)
-        st.pyplot(fig)
+    # Tạo biểu đồ số lượng dữ liệu của mỗi nhãn trong tập train
+    unique_labels, counts = np.unique(y_train_initial, return_counts=True)
+    fig, ax = plt.subplots()
+    ax.bar(unique_labels, counts)
+    ax.set_xlabel('Nhãn')
+    ax.set_ylabel('Số lượng')
+    ax.set_title('Phân phối số lượng dữ liệu trong tập train')
+    ax.set_xticks(unique_labels)
+    st.pyplot(fig)
 
 
 
