@@ -121,7 +121,7 @@ def learning_model():
     y_test = st.session_state["y_test"]
 
     # Lựa chọn tham số huấn luyện
-    k_folds = st.slider("Số fold cho Cross-Validation:", 3, 10, 5)
+    num_k_folds = st.slider("Số fold cho Cross-Validation:", 3, 10, 5)
     num_layers = st.slider("Số lớp ẩn:", 1, 5, 2)
     epochs = st.slider("Số lần lặp tối đa", 2, 50, 5)
     learning_rate_init = st.slider("Tốc độ học", 0.001, 0.1, 0.01, step=0.001, format="%.3f")
@@ -144,7 +144,7 @@ def learning_model():
                 "num_neurons": num_neurons,
                 "activation": activation,
                 "optimizer": optimizer,
-                "k_folds": k_folds,
+                "k_folds": num_k_folds,
                 "epochs": epochs,
                 "learning_rate": learning_rate_init,
                 "threshold": threshold,
@@ -181,7 +181,7 @@ def learning_model():
             for iter_idx in range(iteration):
                 iteration_count += 1
                 st.write(f"**Lần lặp thứ {iteration_count}:**")
-
+                k_folds = min(num_k_folds, max(2, int(5000 / len(X_train))))
                 progress_bar = st.progress(0)
                 progress_text = st.empty()
 
@@ -206,7 +206,7 @@ def learning_model():
                     losses.append(history.history["val_loss"][-1])
 
                     # Cập nhật tiến trình
-                    progress = (fold_count) / k_folds
+                    progress = i
                     progress_bar.progress(progress)
                     progress_text.text(f"️🎯 Tiến trình huấn luyện: {int(progress * 100)}%")
 
