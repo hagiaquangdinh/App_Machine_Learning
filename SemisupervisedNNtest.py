@@ -173,6 +173,10 @@ def learning_model():
             start_time = time.time()
             iteration_count = 0
 
+            if len(X_train) == 0 or len(y_train) == 0:
+                st.error("❌ Tập huấn luyện rỗng!")
+                mlflow.end_run()
+                return
             # Vòng lặp huấn luyện với Pseudo-Labeling
             for iter_idx in range(iteration):
                 iteration_count += 1
