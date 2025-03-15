@@ -103,11 +103,11 @@ def data_preparation():
         # mlflow.log_metric("val_percent", val_percent)
         # with result_placeholder:
         # Hiển thị kết quả
-    st.write(f"📊 **Tỷ lệ phân chia**: Test={test_percent:.0f}%, Train={train_percent:.0f}%, Val={_percent:.0f}%")
+    st.write(f"📊 **Tỷ lệ phân chia**: Test={test_percent:.0f}%, Train={train_percent:.0f}%, Indices={indices_percent:.0f}%")
     st.write("✅ Dữ liệu đã được xử lý và chia tách.")
     st.write(f"🔹 Kích thước tập huấn luyện ban đầu: `{X_train_initial.shape}`")
     st.write(f"🔹 Kích thước tập kiểm tra: `{X_test_data.shape}`")
-    st.write(f"🔹 Kích thước tập validation: `{X_indices_data.shape}`")
+    st.write(f"🔹 Kích thước tập indices: `{X_indices_data.shape}`")
 
     # Tạo biểu đồ số lượng dữ liệu của mỗi nhãn trong tập train
     unique_labels, counts = np.unique(y_train_initial, return_counts=True)
