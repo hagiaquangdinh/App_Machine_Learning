@@ -5,23 +5,14 @@ import os
 import cv2
 import numpy as np
 import pandas as pd
-import pickle
 import seaborn as sns
 import random
-import struct
 from sklearn.datasets import fetch_openml, load_iris
 import mlflow
 import matplotlib.pyplot as plt
 from streamlit_drawable_canvas import st_canvas
 from sklearn.model_selection import train_test_split
-from sklearn import datasets
-from sklearn.preprocessing import StandardScaler
-from sklearn.tree import DecisionTreeClassifier,plot_tree
-from sklearn.svm import SVC
-from sklearn.metrics import accuracy_score, classification_report, ConfusionMatrixDisplay
 from PIL import Image
-from sklearn.model_selection import KFold
-from collections import Counter
 from mlflow.tracking import MlflowClient
 from streamlit_drawable_canvas import st_canvas
 from tensorflow.keras import layers, models, callbacks, optimizers
@@ -31,6 +22,9 @@ from sklearn.model_selection import train_test_split, StratifiedKFold
 from mlflow.models.signature import infer_signature
 from tensorflow.keras.models import Sequential
 from tensorflow import keras
+
+
+
 
 def preprocess_canvas_image(canvas_result):
     if canvas_result.image_data is not None:
@@ -537,49 +531,24 @@ def run_PseudoLabellingt_app():
 
 
 
-    with tab_demo:   
+    with tab_demo:
         with st.expander("**Dự đoán kết quả**", expanded=True):
             st.write("**Dự đoán trên ảnh do người dùng tải lên**")
-
-            # Kiểm tra xem mô hình đã được huấn luyện và lưu kết quả chưa
-            if "selected_model_type" not in st.session_state or "trained_model" not in st.session_state:
-                st.warning("⚠️ Chưa có mô hình nào được huấn luyện. Vui lòng huấn luyện mô hình trước khi dự đoán.")
+            if "trained_model" not in st.session_state:
+                st.warning("⚠️ Chưa có mô hình nào được huấn luyện.")
             else:
-                best_model_name = st.session_state.selected_model_type
-                best_model = st.session_state.trained_model
+                best_model = st.session_state["trained_model"]
+                st.write(f"Mô hình đang sử dụng: Neural Network")
 
-                st.write(f"Mô hình đang sử dụng: `{best_model_name}`")
-                # st.write(f"✅ Độ chính xác trên tập kiểm tra: `{st.session_state.get('test_accuracy', 'N/A'):.4f}`")
+                uploaded_file = st.file_uploader("📂 Chọn một ảnh", type=["png", "jpg", "jpeg"])
+                if uploaded_file:
+                    image = Image.open(uploaded_file).convert("L")
+                    image = np.array(image.resize((28, 28)), dtype=np.float32) / 255.0  # Normalize to [0, 1]
+                    image = image.reshape(1, -1)  # Shape: (1, 784)
 
-                # Cho phép người dùng tải lên ảnh
-                uploaded_file = st.file_uploader("📂 Chọn một ảnh để dự đoán", type=["png", "jpg", "jpeg"])
-
-                if uploaded_file is not None:
-                    # Đọc ảnh từ tệp tải lên
-                    image = Image.open(uploaded_file).convert("L")  # Chuyển sang ảnh xám
-                    image = np.array(image)
-
-                    # Kiểm tra xem dữ liệu huấn luyện đã lưu trong session_state hay chưa
-                    if "X_train" in st.session_state:
-                        X_train_shape = st.session_state["X_train"].shape[1]  # Lấy số đặc trưng từ tập huấn luyện
-
-                        # Resize ảnh về kích thước phù hợp với mô hình đã huấn luyện
-                        image = cv2.resize(image, (28, 28))  # Cập nhật kích thước theo dữ liệu ban đầu
-                        image = image.reshape(1, -1)  # Chuyển về vector 1 chiều
-
-                        # Đảm bảo số chiều đúng với dữ liệu huấn luyện
-                        if image.shape[1] == X_train_shape:
-                            prediction = best_model.predict(image)[0]
-
-                            # Hiển thị ảnh và kết quả dự đoán
-                            st.image(uploaded_file, caption="📷 Ảnh bạn đã tải lên", use_container_width=True)
-                            
-                            st.success(f"Dự đoán: {np.argmax(prediction)} với xác suất {np.max(prediction):.2f}")
-                        else:
-                            st.error(f"Ảnh không có số đặc trưng đúng ({image.shape[1]} thay vì {X_train_shape}). Hãy kiểm tra lại dữ liệu đầu vào!")
-                    else:
-                        st.error("Dữ liệu huấn luyện không tìm thấy. Hãy huấn luyện mô hình trước khi dự đoán.")
-
+                    prediction = best_model.predict(image)[0]
+                    st.image(uploaded_file, caption="📷 Ảnh đã tải lên", width=150)
+                    st.success(f"Dự đoán: {np.argmax(prediction)} với xác suất {np.max(prediction):.2f}")
 
 
 
@@ -744,11 +713,5 @@ def run_PseudoLabellingt_app():
 
 if __name__ == "__main__":
     run_PseudoLabellingt_app()
-    # st.write(f"MLflow Tracking URI: {mlflow.get_tracking_uri()}")
-    # print("🎯 Kiểm tra trên DagsHub: https://dagshub.com/quangdinh/HMVPYTHON.mlflow/")
-    # # # cd "C:\Users\Dell\OneDrive\Pictures\Documents\Code\python\OpenCV\HMVPYTHON\App"
-    # ClassificationMinst.
     
-    ## thay vì decision tree là gini và entropy thì -> chỉ còn entropy với chọn độ sâu của cây
-    ## bổ sung thêm Chọn số folds (KFold Cross-Validation) ở cả 2 phần decsion tree và svms
-    ## cập nhật lại phần demo , vì nó đang không sử dụng dữ liệu ở phần huấn luyện
+    
