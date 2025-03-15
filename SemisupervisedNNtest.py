@@ -225,7 +225,9 @@ def learning_model():
                         # Cập nhật thanh trạng thái và hiển thị phần trăm
                         progress = (i + 1) / total_folds  # Tính phần trăm hoàn thành
                         progress_bar.progress(progress)  # Cập nhật thanh trạng thái
-                        progress_text.text(f"️🎯Tiến trình huấn luyện: {int(progress * 100)}%")   
+                        progress_text.text(f"️🎯Tiến trình huấn luyện: {int(progress * 100)}%")
+                        if len(X_k_val) == 0:
+                            break   
 
                     # Dự đoán nhãn cho phần dữ liệu còn lại (99% của tập train ban đầu)
                     y_pred = cnn.predict(X_val)
@@ -249,7 +251,7 @@ def learning_model():
                     y_train = y_new
                     X_val = X_val[pseudo_labels == -1]
                     y_val = y_val[pseudo_labels == -1]
-                    
+
                 # Điều kiện dừng
                 elif len(X_confident) == 0:
                     st.write(f"🔹 Vòng {iteration + 1}: Không có mẫu nào vượt ngưỡng {threshold}. Dừng lại.")
@@ -260,7 +262,8 @@ def learning_model():
                 elif len(X_val) == 0:
                     st.write("✅ Đã gán nhãn hết tập unlabeled!")
                     break
-                
+                else:
+                    break
             elapsed_time = time.time() - start_time
 
             avg_val_accuracy = np.mean(accuracies)
@@ -524,9 +527,11 @@ def run_PseudoLabellingt_app():
             st.session_state.show_training_options = True
 
             if st.session_state.show_training_options:
+                
                 # Cập nhật dữ liệu
                 learning_model()
-
+                
+                    
 
 
 
