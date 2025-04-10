@@ -275,12 +275,6 @@ def learning_model():
 
             mlflow.end_run()
 
-            # Lưu mô hình và hiển thị kết quả
-            st.session_state["selected_model_type"] = "Neural Network"
-            st.session_state["trained_model"] = cnn
-            st.success(f"✅ Huấn luyện hoàn tất trong {elapsed_time:.2f} giây!")
-            st.write(f"📊 **Độ chính xác trên tập test:** {test_accuracy:.4f}")
-
             # Vẽ biểu đồ Loss và Accuracy
             st.markdown("#### 📈 Biểu đồ Accuracy và Loss")
             fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(12, 4))
@@ -299,6 +293,12 @@ def learning_model():
             ax2.legend()
 
             st.pyplot(fig)
+            
+            # Lưu mô hình và hiển thị kết quả
+            
+            st.session_state["trained_model"] = cnn
+            st.success(f"✅ Huấn luyện hoàn tất trong {elapsed_time:.2f} giây!")
+            st.write(f"📊 **Độ chính xác trên tập test:** {test_accuracy:.4f}")
 
 
 
@@ -542,10 +542,10 @@ def run_PseudoLabellingt_app():
             st.write("**Dự đoán trên ảnh do người dùng tải lên**")
 
             # Kiểm tra xem mô hình đã được huấn luyện và lưu kết quả chưa
-            if "selected_model_type" not in st.session_state or "trained_model" not in st.session_state:
+            if "trained_model" not in st.session_state:
                 st.warning("⚠️ Chưa có mô hình nào được huấn luyện. Vui lòng huấn luyện mô hình trước khi dự đoán.")
             else:
-                best_model_name = st.session_state.selected_model_type
+                best_model_name = "Neural Network"
                 best_model = st.session_state.trained_model
 
                 st.write(f"Mô hình đang sử dụng: `{best_model_name}`")
